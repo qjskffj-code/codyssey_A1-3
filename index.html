@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="끝점을 선명하게 만들고 다음 행동으로 연결하는 프로젝트 플래너 Bound.">
+  <title>Bound — Make the finish visible</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand"><span class="brand-mark">B</span><span>Bound</span><button class="mobile-close" id="closeSidebar" aria-label="메뉴 닫기">×</button></div>
+      <p class="eyebrow">DEMO WORKSPACE</p>
+      <nav aria-label="주요 메뉴">
+        <button class="nav-item is-active" data-view="today"><span class="nav-icon sky">✦</span><span>Today</span><small id="todayCount">3</small></button>
+        <button class="nav-item" data-view="projects"><span class="nav-icon mint">◴</span><span>Projects</span><small>3</small></button>
+        <button class="nav-item" data-view="frame"><span class="nav-icon violet">✣</span><span>AI Frame</span><em>AI</em></button>
+        <button class="nav-item" data-view="about"><span class="nav-icon slate">i</span><span>About</span></button>
+      </nav>
+      <div class="sidebar-note">
+        <span class="privacy-dot"></span>
+        <p><strong>Sample data only</strong><br>작성 내용은 이 브라우저에만 저장됩니다.</p>
+      </div>
+      <button class="reset-button" id="resetDemo">Reset demo data</button>
+    </aside>
+
+    <main>
+      <header class="topbar">
+        <button class="mobile-menu" id="openSidebar" aria-label="메뉴 열기">☰</button>
+        <span class="topbar-label">Learning prototype</span>
+        <span class="save-state" id="saveState"><i></i>Saved locally</span>
+      </header>
+
+      <section class="view is-active" id="view-today" aria-labelledby="todayTitle">
+        <div class="page-heading">
+          <div><p class="kicker" id="todayDate"></p><h1 id="todayTitle">Today</h1><p>끝점을 잊지 않으면서, 지금 할 수 있는 한 가지에 집중하세요.</p></div>
+          <div class="progress-orbit" aria-label="오늘 진행률"><strong id="progressValue">0%</strong><span>complete</span></div>
+        </div>
+        <div class="calendar-strip"><time>14:00</time><div><strong>스프린트 리뷰</strong><small>팀 캘린더 · 45분</small></div><span></span></div>
+        <div class="section-heading"><h2>Next actions</h2><button id="showComposer">＋ Add</button></div>
+        <form class="quick-add is-hidden" id="taskForm"><input id="taskInput" maxlength="120" placeholder="다음 행동을 입력하세요" autocomplete="off"><button type="submit">Add</button><button type="button" id="cancelComposer">Cancel</button></form>
+        <div class="task-list" id="taskList"></div>
+        <div class="reflection-card"><span>↗</span><div><strong>오늘의 작은 질문</strong><p>이 일을 끝내면 누구의 경험이 어떻게 달라질까요?</p></div></div>
+      </section>
+
+      <section class="view" id="view-projects" aria-labelledby="projectsTitle">
+        <div class="page-heading compact"><div><p class="kicker">YOUR WORK</p><h1 id="projectsTitle">Projects</h1><p>진행 중인 일을 결과와 다음 행동으로 연결합니다.</p></div></div>
+        <div class="project-grid" id="projectGrid"></div>
+        <article class="project-focus" id="projectFocus"></article>
+      </section>
+
+      <section class="view" id="view-frame" aria-labelledby="frameTitle">
+        <div class="page-heading compact ai-heading"><div><p class="kicker">AI PROJECT FRAMER</p><h1 id="frameTitle">막연한 일을 실행 가능한 구조로</h1><p>프로젝트의 끝점과 가장 큰 장애물을 입력하면 AI가 측정 기준, 바라는 반응, 경계와 첫 행동을 제안합니다.</p></div><span class="sparkle">✣</span></div>
+        <div class="ai-layout">
+          <form class="ai-form" id="frameForm">
+            <label>프로젝트 이름<input id="projectName" maxlength="80" placeholder="예: 작은 독서 모임 열기" required></label>
+            <label>완료되었을 때 만들고 싶은 변화<textarea id="projectOutcome" maxlength="600" rows="5" placeholder="누구에게 어떤 변화가 생기면 이 프로젝트가 잘 끝난 것인지 적어주세요." required></textarea></label>
+            <label>지금 가장 막히는 점<textarea id="projectHurdle" maxlength="400" rows="3" placeholder="예: 참여자가 정말 원하는 경험을 아직 모른다"></textarea></label>
+            <button class="primary-button" type="submit" id="frameSubmit"><span>✣</span> Frame with AI</button>
+            <p class="form-help">개인정보나 비밀정보는 입력하지 마세요. AI의 제안은 초안이며 최종 판단은 사용자가 합니다.</p>
+          </form>
+          <div class="ai-result empty" id="aiResult" aria-live="polite">
+            <div class="empty-symbol">✣</div><h2>프로젝트의 끝점을 함께 그려볼게요</h2><p>왼쪽 내용을 입력하면 이곳에 구조화된 제안이 표시됩니다.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="view-about" aria-labelledby="aboutTitle">
+        <div class="page-heading compact"><div><p class="kicker">ABOUT THIS PROJECT</p><h1 id="aboutTitle">왜 Bound를 만들었나요?</h1><p>기능을 만드는 것과, 계속 쓰고 싶은 경험을 만드는 것은 다르다는 질문에서 시작했습니다.</p></div></div>
+        <div class="story-grid">
+          <article><span>01</span><h2>문제</h2><p>첫 아이디어였던 Away를 만들수록 실제 생활에서 계속 사용할지 확신이 줄었습니다. 기능의 수보다 사용 흐름의 품질이 먼저라는 걸 발견했습니다.</p></article>
+          <article><span>02</span><h2>학습 방법</h2><p>완성도 높은 상용 앱의 정보 구조와 인터랙션을 관찰하고 재구성했습니다. 그대로 복제하는 데서 멈추지 않고, 왜 편한지를 작은 단위로 검증했습니다.</p></article>
+          <article><span>03</span><h2>Bound의 확장</h2><p>할 일을 모으는 흐름 위에 Metric Goal, Desired Response, Hurdle, Boundary를 더해 “무엇을 할까”와 “어디까지 가려는가”를 함께 보게 했습니다.</p></article>
+        </div>
+        <div class="notice-card"><h2>Learning & attribution</h2><p>Bound는 비상업적 학습·포트폴리오 목적의 독립 프로토타입입니다. 할 일 관리 UX 연구 과정에서 Cultured Code의 Things를 참고했으며, 해당 회사와 제휴하거나 승인을 받은 제품이 아닙니다.</p><p>Metric Goal, Desired Response, Hurdle, Boundary를 활용한 프로젝트 프레이밍은 교육기획자 윤소정님의 유료 생각구독 콘텐츠에서 배운 개념을 바탕으로 재해석했습니다. 원문이나 유료 자료는 복제하지 않았습니다.</p></div>
+      </section>
+    </main>
+  </div>
+  <div class="toast" id="toast" role="status"></div>
+  <script src="/js/app.js" defer></script>
+</body>
+</html>
