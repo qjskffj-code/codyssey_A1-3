@@ -4,7 +4,7 @@
 
 - [ ] 별도 GitHub 공개 저장소 URL
 - [ ] Vercel 배포 URL
-- [ ] Vercel에 `OPENAI_API_KEY` 환경변수 등록
+- [ ] Vercel에 `GEMINI_API_KEY` 환경변수 등록
 - [ ] 배포 URL에서 `/api/frame` 실제 호출 성공
 - [ ] 저장소에 `.env`, 실제 데이터, 비공개 참고자료가 없는지 확인
 - [ ] README의 Live demo 항목에 최종 URL 반영

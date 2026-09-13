@@ -10,24 +10,22 @@ from unittest.mock import patch
 import api.frame as frame
 
 
-class FakeResponse:
-    output_parsed = frame.ProjectFrame(
-        project_title="작은 독서 모임",
-        metric_goals=["6명이 첫 모임에 참여한다"],
-        desired_responses=["다음 모임에도 오고 싶다고 말한다"],
-        key_hurdle="참여자가 원하는 대화 방식을 모른다",
-        boundaries=["90분 안에 마친다", "발언을 강요하지 않는다"],
-        first_actions=["후보 참여자 두 명에게 질문한다", "모임 안내 초안을 쓴다"],
-    )
+class FakeHttpResponse:
+    status_code = 200
 
+    def raise_for_status(self):
+        return None
 
-class FakeResponses:
-    def parse(self, **_kwargs):
-        return FakeResponse()
-
-
-class FakeClient:
-    responses = FakeResponses()
+    def json(self):
+        output_text = frame.ProjectFrame(
+            project_title="작은 독서 모임",
+            metric_goals=["6명이 첫 모임에 참여한다"],
+            desired_responses=["다음 모임에도 오고 싶다고 말한다"],
+            key_hurdle="참여자가 원하는 대화 방식을 모른다",
+            boundaries=["90분 안에 마친다", "발언을 강요하지 않는다"],
+            first_actions=["후보 참여자 두 명에게 질문한다", "모임 안내 초안을 쓴다"],
+        ).model_dump_json()
+        return {"steps": [{"type": "model_output", "content": [{"type": "text", "text": output_text}]}]}
 
 
 class FrameEndpointTests(unittest.TestCase):
@@ -70,11 +68,16 @@ class FrameEndpointTests(unittest.TestCase):
         self.assertIn("API 키", payload["error"])
 
     def test_returns_structured_frame(self):
-        with patch.dict(os.environ, {"OPENAI_API_KEY": "test-key"}, clear=False), patch.object(frame, "OpenAI", return_value=FakeClient()):
+        with patch.dict(os.environ, {"GEMINI_API_KEY": "test-key"}, clear=False), patch.object(
+            frame.requests, "post", return_value=FakeHttpResponse()
+        ) as mock_post:
             status, payload = self.post({"name": "독서 모임", "outcome": "다음에도 만나고 싶은 대화를 만든다"})
         self.assertEqual(status, 200)
         self.assertEqual(payload["project_title"], "작은 독서 모임")
         self.assertEqual(len(payload["boundaries"]), 2)
+        request_payload = mock_post.call_args.kwargs["json"]
+        self.assertFalse(request_payload["store"])
+        self.assertEqual(request_payload["response_format"]["mime_type"], "application/json")
 
 
 if __name__ == "__main__":

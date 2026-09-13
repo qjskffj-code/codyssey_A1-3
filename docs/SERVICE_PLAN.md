@@ -87,10 +87,10 @@ Thoughts에서 생각 기록 또는 AI Frame 진입
 
 ### 처리
 
-- 서버의 OpenAI Responses API 호출
-- Pydantic 스키마를 사용한 Structured Outputs
+- 서버의 Gemini API 호출
+- Gemini Interactions REST API와 Pydantic JSON Schema를 사용한 Structured Outputs
 - 사용자 입력은 프로젝트 맥락으로만 취급하도록 지시
-- 20초 서버 시간 제한, 1회 재시도
+- 20초 서버 시간 제한
 - 서버에서 사용자 본문 로그를 남기지 않음
 
 ### 출력

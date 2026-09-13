@@ -41,7 +41,8 @@ if __name__ == "__main__":
     request_handler = partial(DevelopmentHandler, directory=str(ROOT))
     server = ThreadingHTTPServer(("127.0.0.1", port), request_handler)
     print(f"Bound Mission: http://127.0.0.1:{port}")
-    print("AI Frame:", "ready" if os.environ.get("OPENAI_API_KEY") else "OPENAI_API_KEY is missing")
+    has_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
+    print("AI Frame:", "ready" if has_key else "GEMINI_API_KEY is missing")
     try:
         server.serve_forever()
     except KeyboardInterrupt:

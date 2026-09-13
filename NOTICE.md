@@ -14,7 +14,7 @@ Metric Goal, Desired Response, Hurdle, Boundary 프레이밍은 교육기획자 
 
 ## 데이터 및 AI
 
-공개 데모에는 가상 샘플 데이터만 사용합니다. AI Frame에 입력한 내용은 결과 생성을 위해 OpenAI API로 전송될 수 있으므로 개인정보나 비밀정보를 입력하지 않아야 합니다. OpenAI와 Vercel의 데이터 처리 조건은 각 서비스 정책의 적용을 받습니다.
+공개 데모에는 가상 샘플 데이터만 사용합니다. AI Frame에 입력한 내용은 결과 생성을 위해 Google Gemini API로 전송될 수 있으므로 개인정보나 비밀정보를 입력하지 않아야 합니다. Google과 Vercel의 데이터 처리 조건은 각 서비스 정책의 적용을 받습니다.
 
 ## 사용 범위
 
