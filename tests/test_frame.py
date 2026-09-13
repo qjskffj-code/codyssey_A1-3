@@ -78,6 +78,8 @@ class FrameEndpointTests(unittest.TestCase):
         request_payload = mock_post.call_args.kwargs["json"]
         self.assertFalse(request_payload["store"])
         self.assertEqual(request_payload["response_format"]["mime_type"], "application/json")
+        self.assertEqual(request_payload["generation_config"]["thinking_level"], "low")
+        self.assertEqual(request_payload["generation_config"]["max_output_tokens"], 2048)
 
 
 if __name__ == "__main__":

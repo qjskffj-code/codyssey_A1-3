@@ -111,6 +111,10 @@ class handler(BaseHTTPRequestHandler):
                         "mime_type": "application/json",
                         "schema": ProjectFrame.model_json_schema(),
                     },
+                    "generation_config": {
+                        "thinking_level": "low",
+                        "max_output_tokens": 2048,
+                    },
                     "store": False,
                 },
                 timeout=20,

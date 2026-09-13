@@ -90,6 +90,7 @@ Thoughts에서 생각 기록 또는 AI Frame 진입
 - 서버의 Gemini API 호출
 - Gemini Interactions REST API와 Pydantic JSON Schema를 사용한 Structured Outputs
 - 사용자 입력은 프로젝트 맥락으로만 취급하도록 지시
+- 짧은 프레이밍 작업에 맞춘 낮은 추론 수준과 출력 길이 제한
 - 20초 서버 시간 제한
 - 서버에서 사용자 본문 로그를 남기지 않음
 
