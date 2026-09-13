@@ -14,7 +14,7 @@
 캡처 이미지는 `screenshots/submission/`에 보관할 수 있다. 개인 데이터가 찍힌 이미지는 `screenshots/private/`에만 두며 Git에 올리지 않는다.
 
 - [ ] **데스크톱 메인 화면**: Today 전체와 사이드바가 보이도록 캡처
-- [ ] **3개 이상 화면/섹션**: Today, Projects, AI Frame, About의 이동이 확인되도록 캡처
+- [ ] **3개 이상 화면/섹션**: Thoughts, Today, Projects, AI Frame, About의 이동이 확인되도록 캡처
 - [ ] **모바일 반응형**: 390px 전후 너비에서 Today 또는 AI Frame 캡처
 - [ ] **AI 입력 화면**: 프로젝트 이름·원하는 변화·허들을 입력한 상태
 - [ ] **AI 출력 화면**: Metric Goals부터 First Actions까지 결과가 보이는 상태
@@ -30,6 +30,12 @@
 - [ ] 항목 삭제
 - [ ] 새로고침 후 데이터 유지
 - [ ] Reset demo data로 가상 데이터 복원
+
+### Thoughts
+
+- [ ] 생각과 선택적인 맥락 추가
+- [ ] 새로고침 후 기록 유지
+- [ ] `AI Frame으로`를 눌러 입력 내용 전달 확인
 
 ### Projects
 
