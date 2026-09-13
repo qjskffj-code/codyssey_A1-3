@@ -18,6 +18,7 @@ Bound는 이 학습을 바탕으로 할 일 관리 흐름을 독자적인 시각
 ## 주요 기능
 
 - **Today**: 오늘의 행동 확인, 추가, 완료, 삭제와 진행률 표시
+- **Thoughts**: 정리 전 생각을 빠르게 보관하고 AI Frame 입력으로 연결
 - **Projects**: 샘플 프로젝트별 목표·반응·허들·바운더리 비교
 - **AI Frame**: 프로젝트 맥락을 입력하면 AI가 구조화된 프로젝트 프레임과 첫 행동을 제안
 - **About**: Away에서 Bound로 전환한 과정과 학습 내용을 소개
@@ -43,6 +44,7 @@ React, Vue 등의 프런트엔드 프레임워크는 사용하지 않았습니�
 bound-mission/
 ├─ api/frame.py
 ├─ css/styles.css
+├─ dev_server.py
 ├─ docs/
 ├─ js/app.js
 ├─ index.html
@@ -52,17 +54,21 @@ bound-mission/
 
 ## 로컬 실행
 
-정적 화면만 확인하려면 프로젝트 루트에서 간단한 로컬 웹 서버를 실행합니다.
+먼저 가상환경을 만들고 필요한 패키지를 설치합니다.
 
 ```bash
-python -m http.server 4173
+python -m venv .venv
+.venv\Scripts\python -m pip install -r requirements.txt
 ```
 
-그 뒤 `http://localhost:4173`에 접속합니다. AI 기능까지 확인하려면 Vercel CLI 환경에서 실행해야 합니다.
+`.env.example`을 복사해 `.env.local`을 만들고 자신의 API 키를 넣은 뒤 로컬 개발 서버를 실행합니다.
 
 ```bash
-vercel dev
+copy .env.example .env.local
+.venv\Scripts\python dev_server.py
 ```
+
+그 뒤 `http://127.0.0.1:4173`에 접속합니다. `python -m http.server` 같은 정적 서버는 화면만 제공하므로 AI Frame은 작동하지 않습니다. Vercel CLI가 설치되어 있다면 `vercel dev`를 사용해도 됩니다.
 
 ## 환경변수
 

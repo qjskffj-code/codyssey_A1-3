@@ -51,7 +51,7 @@ class handler(BaseHTTPRequestHandler):
             self._json(400, {"error": "입력 가능한 글자 수를 초과했습니다."})
             return
         if not os.environ.get("OPENAI_API_KEY"):
-            self._json(503, {"error": "AI 기능이 아직 설정되지 않았습니다. 관리자에게 알려주세요."})
+            self._json(503, {"error": "AI API 키가 설정되지 않았습니다. 배포 또는 로컬 환경변수를 확인해 주세요."})
             return
 
         try:
