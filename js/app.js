@@ -1,5 +1,14 @@
 const STORAGE_KEY = 'bound-mission-demo-v1';
 
+const SAMPLE_FRAME = {
+  project_title: '작은 독서 모임',
+  metric_goals: ['첫 모임에 6명이 참여한다', '90분 안에 대화를 마친다'],
+  desired_responses: ['“다음 모임에도 오고 싶어요.”', '“말하지 않아도 편안했어요.”'],
+  key_hurdle: '참여자가 원하는 대화 방식을 아직 모른다',
+  boundaries: ['발언을 강요하지 않는다', '준비물을 최소화한다', '한 번에 한 문장만 다룬다'],
+  first_actions: ['후보 참여자 두 명에게 원하는 경험을 묻는다', '90분 진행 순서를 한 장에 적는다'],
+};
+
 const sample = {
   thoughts: [
     { id: 'i1', title: '사용 전과 후의 감정 차이를 기록해 보기', detail: '기능보다 사용자가 느끼는 변화에 초점을 맞추고 싶다.', createdAt: '오늘' },
@@ -12,9 +21,9 @@ const sample = {
     { id: 't3', title: '미션 제출 스토리 초안 쓰기', group: 'A1-3 제출', tag: '중요', done: true },
   ],
   projects: [
-    { id: 'p1', title: 'Bound 학습 프로토타입', area: 'Product', progress: 68, color: '#4f8ee8', description: '쓰고 싶은 경험을 분석하고 나만의 프레이밍으로 확장하기', metric: '5명의 사용성 테스트 완료', response: '“다음 행동을 바로 고를 수 있어요.”', hurdle: '기능보다 흐름의 이유를 명확히 설명하기', boundaries: ['첫 사용 3분 안에 이해', '핵심 흐름은 3단계 이내', '개인정보를 서버에 남기지 않기'] },
-    { id: 'p2', title: 'A1-3 미션 제출', area: 'Learning', progress: 42, color: '#826bd7', description: '과정과 배움을 재현 가능한 산출물로 정리하기', metric: '필수 제출물 5종 완성', response: '“왜 이렇게 만들었는지 이해돼요.”', hurdle: '카피가 아닌 학습과 확장의 맥락 보여주기', boundaries: ['공개 가능한 자료만 사용', 'API 키 노출 금지', '모바일 동작 검증'] },
-    { id: 'p3', title: '주말 독서 모임', area: 'Life', progress: 20, color: '#49aa96', description: '좋은 문장을 나누는 작은 오프라인 모임 열기', metric: '첫 모임 6명 참여', response: '“다음 모임에도 오고 싶어요.”', hurdle: '참여자가 원하는 대화 방식을 모름', boundaries: ['90분 안에 마치기', '발언 강요하지 않기', '준비물 최소화'] },
+    { id: 'p1', title: 'Bound 학습 프로토타입', area: 'Product', progress: 68, color: '#4f8ee8', description: '쓰고 싶은 경험을 분석하고 나만의 프레이밍으로 확장하기', metric: '5명의 사용성 테스트 완료', response: '“다음 행동을 바로 고를 수 있어요.”', hurdle: '기능보다 흐름의 이유를 명확히 설명하기', boundaries: ['첫 사용 3분 안에 이해', '핵심 흐름은 3단계 이내', '개인정보를 서버에 남기지 않기'], nextAction: '첫 사용자가 멈추는 순간 한 곳을 관찰하기' },
+    { id: 'p2', title: 'A1-3 미션 제출', area: 'Learning', progress: 42, color: '#826bd7', description: '과정과 배움을 재현 가능한 산출물로 정리하기', metric: '필수 제출물 5종 완성', response: '“왜 이렇게 만들었는지 이해돼요.”', hurdle: '카피가 아닌 학습과 확장의 맥락 보여주기', boundaries: ['공개 가능한 자료만 사용', 'API 키 노출 금지', '모바일 동작 검증'], nextAction: 'README의 개발 의도와 실제 화면을 대조하기' },
+    { id: 'p3', title: '주말 독서 모임', area: 'Life', progress: 20, color: '#49aa96', description: '좋은 문장을 나누는 작은 오프라인 모임 열기', metric: '첫 모임 6명 참여', response: '“다음 모임에도 오고 싶어요.”', hurdle: '참여자가 원하는 대화 방식을 모름', boundaries: ['90분 안에 마치기', '발언 강요하지 않기', '준비물 최소화'], nextAction: '후보 참여자 두 명에게 원하는 대화 방식을 묻기' },
   ],
 };
 
@@ -57,8 +66,11 @@ function toast(message) {
 function showView(name) {
   document.querySelectorAll('.view').forEach((view) => view.classList.toggle('is-active', view.id === `view-${name}`));
   document.querySelectorAll('.nav-item').forEach((item) => item.classList.toggle('is-active', item.dataset.view === name));
+  document.querySelectorAll('.journey-step').forEach((item) => item.classList.toggle('is-active', item.dataset.view === name));
+  document.body.dataset.view = name;
   $('#sidebar').classList.remove('is-open');
   history.replaceState(null, '', `#${name}`);
+  window.scrollTo({ top: 0, behavior: 'auto' });
 }
 
 function renderThoughts() {
@@ -74,7 +86,7 @@ function renderThoughts() {
         <small>${escapeHtml(thought.createdAt || '오늘')}</small>
       </div>
       <div class="thought-actions">
-        <button type="button" class="frame-thought">AI Frame으로</button>
+        <button type="button" class="frame-thought">끝점 만들기 <span>→</span></button>
         <button type="button" class="delete-thought" aria-label="생각 삭제">×</button>
       </div>
     </article>
@@ -133,10 +145,11 @@ function renderTasks() {
 
 function renderProjects() {
   const grid = $('#projectGrid');
+  $('#projectCount').textContent = String(state.projects.length);
   grid.innerHTML = state.projects.map((project) => `
     <button type="button" class="project-card ${selectedProject === project.id ? 'is-selected' : ''}" data-id="${escapeHtml(project.id)}" style="--card-color:${project.color};--card-progress:${project.progress}%">
       <div class="project-top"><span class="ring"></span><small>${project.progress}%</small></div>
-      <h2>${escapeHtml(project.title)}</h2><p>${escapeHtml(project.area)}</p>
+      <h2>${escapeHtml(project.title)}</h2><p>${escapeHtml(project.area)}</p><span class="project-open">View frame <i>→</i></span>
     </button>
   `).join('');
 
@@ -146,36 +159,95 @@ function renderProjects() {
   }));
 
   const project = state.projects.find((item) => item.id === selectedProject) || state.projects[0];
+  const sampleProject = sample.projects.find((item) => item.id === project.id);
+  const nextAction = project.nextAction || sampleProject?.nextAction || '프로젝트의 다음 행동 한 가지 정하기';
   $('#projectFocus').innerHTML = `
-    <h2>${escapeHtml(project.title)}</h2><p>${escapeHtml(project.description)}</p>
-    <dl>
-      <div class="frame-line"><dt>▥ Metric Goal</dt><dd>${escapeHtml(project.metric)}</dd></div>
-      <div class="frame-line"><dt>◌ Desired Response</dt><dd>${escapeHtml(project.response)}</dd></div>
-      <div class="frame-line"><dt>△ Key Hurdle</dt><dd>${escapeHtml(project.hurdle)}</dd></div>
-      <div class="frame-line"><dt>○ Boundaries</dt><dd>${project.boundaries.map(escapeHtml).join(' · ')}</dd></div>
-    </dl>
+    <header class="project-focus-head">
+      <span class="focus-ring" style="--card-color:${project.color};--card-progress:${project.progress}%"><i>${project.progress}</i></span>
+      <div><small>${escapeHtml(project.area)} · PROJECT FRAME</small><h2>${escapeHtml(project.title)}</h2><p>${escapeHtml(project.description)}</p></div>
+    </header>
+    <div class="project-blueprint">
+      <section class="blueprint-card goal"><span>01 · FINISH</span><h3>Metric Goal</h3><p>${escapeHtml(project.metric)}</p></section>
+      <section class="blueprint-card response"><span>02 · EXPERIENCE</span><h3>Desired Response</h3><p>${escapeHtml(project.response)}</p></section>
+      <section class="blueprint-card hurdle"><span>03 · FOCUS</span><h3>Key Hurdle</h3><p>${escapeHtml(project.hurdle)}</p></section>
+      <section class="blueprint-card boundary"><span>04 · GUARDRAILS</span><h3>Boundaries</h3><ul>${project.boundaries.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul></section>
+    </div>
+    <footer class="project-next"><div><small>NEXT AVAILABLE ACTION</small><strong>${escapeHtml(nextAction)}</strong></div><button type="button" id="startProjectAction">Add to Today <span>→</span></button></footer>
   `;
+
+  $('#startProjectAction').addEventListener('click', () => addActionToToday(nextAction, project.title));
 }
 
-const resultSection = (icon, title, content, list = false) => `
-  <section class="result-section">
+const resultSection = (icon, title, content, list = false, index = 0) => `
+  <section class="result-section" style="--result-index:${index}">
     <h3><span class="result-badge">${icon}</span>${title}</h3>
     ${list ? `<ul>${content.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul>` : `<p>${escapeHtml(content)}</p>`}
   </section>
 `;
 
-function renderAiResult(data) {
+function renderAiResult(data, options = {}) {
   const element = $('#aiResult');
+  const isSample = options.sample === true;
   element.className = 'ai-result';
   element.innerHTML = `
-    <h2>${escapeHtml(data.project_title)}</h2>
-    <p class="result-intro">AI가 제안한 프로젝트 프레임 · 필요에 맞게 수정하세요.</p>
-    ${resultSection('▥', 'Metric Goals', data.metric_goals, true)}
-    ${resultSection('◌', 'Desired Responses', data.desired_responses, true)}
-    ${resultSection('△', 'Key Hurdle', data.key_hurdle)}
-    ${resultSection('○', 'Boundaries', data.boundaries, true)}
-    ${resultSection('→', 'First Actions', data.first_actions, true)}
+    <header class="result-head"><span>${isSample ? 'SAMPLE FRAME' : 'FRAME COMPLETE'}</span><h2>${escapeHtml(data.project_title)}</h2><p class="result-intro">${isSample ? '시연용 가상 데이터입니다. 실제 입력에는 Gemini가 새로운 초안을 제안합니다.' : 'AI가 만든 초안입니다. 사용자의 판단으로 고치고 다음 단계로 연결하세요.'}</p></header>
+    <div class="result-path">
+      ${resultSection('▥', 'Metric Goals', data.metric_goals, true, 0)}
+      ${resultSection('◌', 'Desired Responses', data.desired_responses, true, 1)}
+      ${resultSection('△', 'Key Hurdle', data.key_hurdle, false, 2)}
+      ${resultSection('○', 'Boundaries', data.boundaries, true, 3)}
+      ${resultSection('→', 'First Actions', data.first_actions, true, 4)}
+    </div>
+    <footer class="result-actions"><button type="button" class="secondary-action" id="sendFirstAction">첫 행동을 Today로</button><button type="button" class="result-primary" id="saveFrameProject">프로젝트로 저장 <span>→</span></button></footer>
   `;
+
+  $('#sendFirstAction').addEventListener('click', () => addActionToToday(data.first_actions[0], data.project_title));
+  $('#saveFrameProject').addEventListener('click', () => saveFrameAsProject(data));
+}
+
+function renderAiLoading() {
+  const element = $('#aiResult');
+  element.className = 'ai-result framing';
+  element.innerHTML = `
+    <div class="framing-symbol"><i></i><span>✣</span></div>
+    <h2>끝점을 선명하게 만드는 중</h2>
+    <p>답을 대신 결정하지 않고, 검토할 수 있는 기준으로 정리하고 있습니다.</p>
+    <div class="framing-route"><span>Goal</span><i></i><span>Hurdle</span><i></i><span>Boundary</span><i></i><span>Action</span></div>
+  `;
+}
+
+function addActionToToday(title, group) {
+  if (!title) return;
+  const exists = state.tasks.some((task) => task.title === title && task.group === group);
+  if (!exists) {
+    state.tasks.push({ id: makeId(), title, group, tag: '첫 행동', done: false });
+    save();
+    renderTasks();
+  }
+  showView('today');
+  toast(exists ? '이미 Today에 있는 행동입니다.' : '첫 행동을 Today에 놓았습니다.');
+}
+
+function saveFrameAsProject(data) {
+  const project = {
+    id: makeId(),
+    title: data.project_title,
+    area: 'AI Framed',
+    progress: 0,
+    color: '#746cdb',
+    description: '막연한 생각을 끝점과 첫 행동으로 구조화한 프로젝트',
+    metric: data.metric_goals.join(' · '),
+    response: data.desired_responses.join(' · '),
+    hurdle: data.key_hurdle,
+    boundaries: data.boundaries,
+    nextAction: data.first_actions[0],
+  };
+  state.projects.unshift(project);
+  selectedProject = project.id;
+  save();
+  renderProjects();
+  showView('projects');
+  toast('AI 초안을 새 프로젝트로 저장했습니다.');
 }
 
 function renderAiError(message) {
@@ -185,12 +257,15 @@ function renderAiError(message) {
     <h2>제안을 만들지 못했습니다</h2>
     <p class="result-intro">${escapeHtml(message)}</p>
     <section class="result-section"><p>입력 내용은 그대로 유지됩니다. 설정을 확인한 뒤 다시 시도해 주세요.</p></section>
+    <button type="button" class="sample-preview-button" id="previewFrameError">대신 샘플 프레임 보기</button>
   `;
+  $('#previewFrameError').addEventListener('click', () => renderAiResult(SAMPLE_FRAME, { sample: true }));
 }
 
-document.querySelectorAll('.nav-item').forEach((item) => item.addEventListener('click', () => showView(item.dataset.view)));
+document.querySelectorAll('.nav-item, .journey-step').forEach((item) => item.addEventListener('click', () => showView(item.dataset.view)));
 $('#openSidebar').addEventListener('click', () => $('#sidebar').classList.add('is-open'));
 $('#closeSidebar').addEventListener('click', () => $('#sidebar').classList.remove('is-open'));
+$('#previewFrame').addEventListener('click', () => renderAiResult(SAMPLE_FRAME, { sample: true }));
 
 $('#thoughtForm').addEventListener('submit', (event) => {
   event.preventDefault();
@@ -249,6 +324,7 @@ $('#frameForm').addEventListener('submit', async (event) => {
 
   button.disabled = true;
   button.innerHTML = '<span>✣</span> Framing…';
+  renderAiLoading();
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 25000);
 

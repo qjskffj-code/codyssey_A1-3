@@ -15,7 +15,7 @@
       <nav aria-label="주요 메뉴">
         <button class="nav-item" data-view="thoughts"><span class="nav-icon amber">◌</span><span>Thoughts</span><small id="thoughtCount">3</small></button>
         <button class="nav-item is-active" data-view="today"><span class="nav-icon sky">✦</span><span>Today</span><small id="todayCount">3</small></button>
-        <button class="nav-item" data-view="projects"><span class="nav-icon mint">◴</span><span>Projects</span><small>3</small></button>
+        <button class="nav-item" data-view="projects"><span class="nav-icon mint">◴</span><span>Projects</span><small id="projectCount">3</small></button>
         <button class="nav-item" data-view="frame"><span class="nav-icon violet">✣</span><span>AI Frame</span><em>AI</em></button>
         <button class="nav-item" data-view="about"><span class="nav-icon slate">i</span><span>About</span></button>
       </nav>
@@ -29,7 +29,16 @@
     <main>
       <header class="topbar">
         <button class="mobile-menu" id="openSidebar" aria-label="메뉴 열기">☰</button>
-        <span class="topbar-label">Learning prototype</span>
+        <div class="topbar-product"><span class="topbar-label">BOUND METHOD</span><strong>Thought to action</strong></div>
+        <nav class="journey-rail" aria-label="Bound 작업 흐름">
+          <button type="button" class="journey-step" data-view="thoughts"><i>1</i><span>Capture</span></button>
+          <b aria-hidden="true"></b>
+          <button type="button" class="journey-step" data-view="frame"><i>2</i><span>Frame</span></button>
+          <b aria-hidden="true"></b>
+          <button type="button" class="journey-step" data-view="projects"><i>3</i><span>Shape</span></button>
+          <b aria-hidden="true"></b>
+          <button type="button" class="journey-step" data-view="today"><i>4</i><span>Act</span></button>
+        </nav>
         <span class="save-state" id="saveState"><i></i>Saved locally</span>
       </header>
 
@@ -43,7 +52,7 @@
           <input id="thoughtTitle" maxlength="120" placeholder="지금 놓치고 싶지 않은 생각은 무엇인가요?" required>
           <label for="thoughtDetail">맥락 <small>선택</small></label>
           <textarea id="thoughtDetail" maxlength="500" rows="3" placeholder="왜 떠올랐는지, 누구에게 어떤 변화가 생기면 좋을지 적어보세요."></textarea>
-          <div><span>이 브라우저에만 저장됩니다.</span><button type="submit">Capture thought</button></div>
+          <div><span>이 브라우저에만 저장됩니다.</span><button type="submit">Save to Thoughts</button></div>
         </form>
         <div class="section-heading thought-list-heading"><h2>Unsorted</h2><span id="thoughtSummary"></span></div>
         <div class="thought-list" id="thoughtList"></div>
@@ -62,7 +71,7 @@
       </section>
 
       <section class="view" id="view-projects" aria-labelledby="projectsTitle">
-        <div class="page-heading compact"><div><p class="kicker">YOUR WORK</p><h1 id="projectsTitle">Projects</h1><p>진행 중인 일을 결과와 다음 행동으로 연결합니다.</p></div></div>
+        <div class="page-heading compact"><div><p class="kicker">SHAPE THE FINISH</p><h1 id="projectsTitle">Projects</h1><p>할 일의 양보다 끝점, 장애물과 경계를 먼저 보고 오늘 시작할 행동을 고릅니다.</p></div></div>
         <div class="project-grid" id="projectGrid"></div>
         <article class="project-focus" id="projectFocus"></article>
       </section>
@@ -78,13 +87,16 @@
             <p class="form-help">개인정보나 비밀정보는 입력하지 마세요. AI의 제안은 초안이며 최종 판단은 사용자가 합니다.</p>
           </form>
           <div class="ai-result empty" id="aiResult" aria-live="polite">
-            <div class="empty-symbol">✣</div><h2>프로젝트의 끝점을 함께 그려볼게요</h2><p>왼쪽 내용을 입력하면 이곳에 구조화된 제안이 표시됩니다.</p>
+            <div class="empty-symbol">✣</div><h2>막연함이 행동으로 바뀌는 곳</h2><p>맥락을 입력하면 네 개의 판단 기준과 오늘 시작할 작은 행동으로 정리합니다.</p>
+            <div class="empty-route" aria-hidden="true"><span>Goal</span><i></i><span>Hurdle</span><i></i><span>Boundary</span><i></i><span>Action</span></div>
+            <button type="button" class="sample-preview-button" id="previewFrame">샘플 프레임 보기</button>
           </div>
         </div>
       </section>
 
       <section class="view" id="view-about" aria-labelledby="aboutTitle">
         <div class="page-heading compact"><div><p class="kicker">ABOUT THIS PROJECT</p><h1 id="aboutTitle">왜 Bound를 만들었나요?</h1><p>기능을 만드는 것과, 계속 쓰고 싶은 경험을 만드는 것은 다르다는 질문에서 시작했습니다.</p></div></div>
+        <blockquote class="product-thesis"><span>PRODUCT THESIS</span><strong>좋은 UI는 장식이 아니라,<br>다음 판단을 쉽게 만드는 구조입니다.</strong><p>Make the finish visible.</p></blockquote>
         <div class="story-grid">
           <article><span>01</span><h2>문제</h2><p>첫 아이디어였던 Away를 만들수록 실제 생활에서 계속 사용할지 확신이 줄었습니다. 기능의 수보다 사용 흐름의 품질이 먼저라는 걸 발견했습니다.</p></article>
           <article><span>02</span><h2>학습 방법</h2><p>완성도 높은 상용 앱의 정보 구조와 인터랙션을 관찰하고 재구성했습니다. 그대로 복제하는 데서 멈추지 않고, 왜 편한지를 작은 단위로 검증했습니다.</p></article>
