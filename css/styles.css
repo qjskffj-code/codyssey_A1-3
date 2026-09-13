@@ -19,6 +19,7 @@ body{background:radial-gradient(circle at 83% -8%,rgba(124,110,225,.15),transpar
 .topbar-product{display:flex;min-width:132px;flex-direction:column;gap:2px}
 .topbar-product strong{font-size:12px;font-weight:650;color:#59657a}
 .topbar-label{font-size:8px;font-weight:800;letter-spacing:.14em;color:#a0a9b8}
+.save-state.is-preview{color:#9b7440}.save-state.is-preview i{background:#d49a3c;box-shadow:0 0 0 4px rgba(212,154,60,.12)}
 .journey-rail{display:flex;align-items:center;justify-content:center;gap:8px}
 .journey-step{display:flex;align-items:center;gap:6px;padding:7px 8px;border-radius:10px;color:#919aab;font-size:10px;transition:.2s ease}
 .journey-step i{display:grid;width:20px;height:20px;place-items:center;border:1px solid #d6dce7;border-radius:50%;background:rgba(255,255,255,.65);font-size:8px;font-style:normal;font-weight:750}

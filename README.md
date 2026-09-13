@@ -72,6 +72,8 @@ copy .env.example .env.local
 
 그 뒤 `http://127.0.0.1:4173`에 접속합니다. `python -m http.server` 같은 정적 서버는 화면만 제공하므로 AI Frame은 작동하지 않습니다. Vercel CLI가 설치되어 있다면 `vercel dev`를 사용해도 됩니다.
 
+`index.html`을 파일 탐색기에서 직접 열면 디자인과 로컬 데모 기능을 확인하는 **Static preview**로 실행됩니다. 이 방식은 서버 함수가 없으므로 AI Frame은 사용할 수 없습니다. Gemini까지 확인하려면 반드시 위의 로컬 개발 서버 주소로 접속합니다.
+
 ## 환경변수
 
 `.env.example`을 참고해 로컬 또는 Vercel 프로젝트에 다음 값을 설정합니다.

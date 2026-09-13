@@ -1,4 +1,5 @@
 const STORAGE_KEY = 'bound-mission-demo-v1';
+const IS_STATIC_PREVIEW = location.protocol === 'file:';
 
 const SAMPLE_FRAME = {
   project_title: '작은 독서 모임',
@@ -52,7 +53,13 @@ let toastTimer;
 
 function save() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-  $('#saveState').innerHTML = '<i></i>Saved locally';
+  updateSaveState();
+}
+
+function updateSaveState() {
+  const element = $('#saveState');
+  element.classList.toggle('is-preview', IS_STATIC_PREVIEW);
+  element.innerHTML = IS_STATIC_PREVIEW ? '<i></i>Static preview · AI server off' : '<i></i>Saved locally';
 }
 
 function toast(message) {
@@ -322,6 +329,11 @@ $('#frameForm').addEventListener('submit', async (event) => {
     return;
   }
 
+  if (IS_STATIC_PREVIEW) {
+    renderAiError('파일 직접 열기에서는 AI 서버를 사용할 수 없습니다. 로컬 개발 서버 주소로 접속해 주세요.');
+    return;
+  }
+
   button.disabled = true;
   button.innerHTML = '<span>✣</span> Framing…';
   renderAiLoading();
@@ -368,5 +380,6 @@ $('#todayDate').textContent = date.toUpperCase();
 renderThoughts();
 renderTasks();
 renderProjects();
+updateSaveState();
 const initialView = location.hash.slice(1);
 showView(initialView && document.querySelector(`#view-${CSS.escape(initialView)}`) ? initialView : 'today');
