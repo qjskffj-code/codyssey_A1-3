@@ -43,6 +43,7 @@
 - [사용자 흐름과 구조](#architecture)
 - [핵심 기능](#features)
 - [AI 설계](#ai-design)
+- [실행 화면](#screenshots)
 - [실행 방법](#how-to-run)
 - [테스트](#testing)
 - [미션 요구사항 체크리스트](#공식-미션-요구사항-체크리스트)
@@ -276,10 +277,68 @@ Gemini는 사용자의 프로젝트를 대신 결정하지 않습니다. 입력�
 
 ---
 
+# Screenshots
+
+## 01. Thoughts — 정리하기 전 생각 포착
+
+<p align="center">
+  <img src="assets/images/01_desktop_thoughts.png" alt="Bound Thoughts 데스크톱 화면" width="900">
+</p>
+
+## 02. Today — 오늘의 행동과 완료율
+
+<p align="center">
+  <img src="assets/images/02_desktop_today.png" alt="Bound Today 데스크톱 화면" width="900">
+</p>
+
+## 03. Projects — 프로젝트 끝점 프레임
+
+<p align="center">
+  <img src="assets/images/03_desktop_projects.png" alt="Metric Goal, Desired Response, Hurdle, Boundaries가 표시된 Projects 화면" width="900">
+</p>
+
+## 04. AI Frame — 입력에서 구조화 결과까지
+
+<p align="center">
+  <img src="assets/images/04_desktop_ai_frame.png" alt="Gemini 입력과 구조화된 프로젝트 프레임 결과" width="900">
+</p>
+
+## 05. About — 문제의식과 학습 맥락
+
+<p align="center">
+  <img src="assets/images/05_desktop_about.png" alt="Bound 개발 의도와 출처를 설명하는 About 화면" width="900">
+</p>
+
+## 06. Responsive — 모바일 메뉴와 본문
+
+<p align="center">
+  <img src="assets/images/06_mobile_responsive_1.png" alt="Bound 모바일 사이드 메뉴" width="320">
+  &nbsp;&nbsp;
+  <img src="assets/images/07_mobile_responsive_2.png" alt="Bound 모바일 Thoughts 화면" width="320">
+</p>
+
+## 07. AI Coding Process — UX 분석과 배포 오류 해결
+
+상용 제품을 참고할 때 화면 전체를 막연히 모방하지 않고 선택 상태, 정보 위계, 여백, 아이콘과 피드백을 관찰 단위로 나눠 반복 개선했습니다.
+
+<p align="center">
+  <img src="assets/images/08_codex_ux_analysis.png" alt="Codex와 함께 진행한 UX 세부 분석 과정" width="900">
+</p>
+
+Vercel이 프로젝트를 단일 Python 앱으로 감지해 배포가 실패했을 때, 실제 구조가 정적 프런트엔드와 Python Serverless Function의 조합임을 확인했습니다. Framework Preset을 명시하고 자동 테스트를 통과시킨 뒤 재배포했습니다.
+
+<p align="center">
+  <img src="assets/images/09_codex_deployment_error.png" alt="Vercel 배포 오류의 원인 분석, 수정과 테스트 과정" width="900">
+</p>
+
+---
+
 # Project Structure
 
 ```text
 bound-mission/
+├── assets/
+│   └── images/                  # 제출용 서비스·개발 과정 캡처
 ├── api/
 │   └── frame.py                 # Gemini 호출과 Pydantic 검증
 ├── css/
@@ -427,8 +486,8 @@ node --check js/app.js
 - [x] 배포 URL과 환경변수 설정 방법
 - [x] 서비스 기획서
 - [x] AI 입력·출력·실패 처리 기준
-- [ ] 데스크톱·모바일·AI 동작 화면 캡처 제출
-- [ ] AI 코딩 도구 활용 과정 캡처 제출
+- [x] 데스크톱·모바일·AI 동작 화면 캡처
+- [x] AI 코딩 도구 활용 과정 캡처
 
 ---
 
