@@ -43,6 +43,8 @@
 - [사용자 흐름과 구조](#architecture)
 - [핵심 기능](#features)
 - [AI 설계](#ai-design)
+- [API 키 유출 대응](#security-incident-response)
+- [프레임워크 도입 검토](#framework-adoption-review)
 - [실행 화면](#screenshots)
 - [실행 방법](#how-to-run)
 - [테스트](#testing)
@@ -102,6 +104,37 @@ Bound Mission은 이 학습을 독자적인 시각 언어와 프로젝트 프레
 | Development | Codex, PowerShell | 구현, 비교 검토, 오류 진단과 반복 개선 |
 
 React나 Vue 같은 프런트엔드 프레임워크 없이 순수 HTML/CSS/JavaScript로 구현했습니다. API 키는 브라우저로 전달하지 않고 Vercel의 서버 환경변수에서만 읽습니다.
+
+---
+
+# Framework Adoption Review
+
+이번 미션은 프런트엔드를 순수 HTML/CSS/JavaScript로 구현해야 하므로 프레임워크를 사용하지 않았습니다. 제약이 없더라도 현재 규모에서는 Vanilla 구성이 의존성·빌드 복잡도를 낮추고 전체 동작을 직접 이해하기에 적합합니다. 다만 화면과 상태가 더 늘어나는 실사용 서비스로 확장한다면 React, Vue 같은 컴포넌트 프레임워크를 다음 기준으로 검토할 수 있습니다.
+
+## 도입 시 장단점
+
+| 구분 | 장점 | 단점과 비용 |
+|---|---|---|
+| UI 구조 | 반복되는 카드·메뉴·상태 UI를 컴포넌트로 재사용 | 작은 서비스에도 컴포넌트 계층과 규칙이 추가됨 |
+| 상태 관리 | Thoughts → AI Frame → Projects → Today의 공유 상태를 명시적으로 관리 | 상태 도구 선택과 데이터 흐름 학습 비용이 생김 |
+| 유지보수 | 화면별 파일 분리, 타입 검사, 테스트 자동화에 유리 | 패키지 업데이트와 빌드 도구 유지가 필요함 |
+| 사용자 경험 | 복잡한 편집·전환·낙관적 업데이트 구현이 쉬워짐 | 번들 크기와 초기 로딩, hydration 비용을 관리해야 함 |
+| 협업 | 널리 쓰이는 패턴과 생태계를 활용 가능 | 단일 HTML·JS보다 구조를 이해하기 위한 사전 지식이 필요함 |
+
+## 예상 변경 범위
+
+| 영역 | 변경 내용 | 영향 |
+|---|---|---|
+| 프런트 코드 | `index.html` 중심 구조를 App, Navigation, Thoughts, Today, Projects, AI Frame 컴포넌트로 분리 | HTML과 `js/app.js`의 상당 부분 재구성 |
+| 상태·저장 | 전역 상태와 `localStorage` 접근을 공통 store/hook 계층으로 이동 | 저장 형식 호환 및 마이그레이션 테스트 필요 |
+| 라우팅 | 현재 hash 기반 화면 전환을 클라이언트 라우터로 교체 | 직접 URL 접근을 위한 SPA fallback 또는 Vercel rewrite 필요 |
+| 프런트 빌드 | `package.json`, 패키지 잠금 파일, Vite 등의 개발·빌드 명령 추가 | 정적 파일 직접 실행 대신 빌드 산출물 사용 |
+| Backend | Python `POST /api/frame` 계약은 그대로 유지 가능 | 프런트 fetch 경로와 CORS 없는 same-origin 동작 재검증 |
+| 배포 | Vercel Framework Preset, Build Command, Output Directory 설정 변경 | Preview·Production 빌드와 환경변수 재검증 필요 |
+| 테스트 | 기존 Python API 테스트에 컴포넌트·상태·라우팅·E2E 테스트 추가 | 테스트 도구와 CI 실행 단계 증가 |
+| 성능·접근성 | 번들 크기, 초기 렌더링, 포커스 이동과 키보드 탐색 재검증 | 모바일과 저사양 환경 회귀 가능성 관리 |
+
+현재 결론은 **미션 및 공개 데모는 Vanilla를 유지**하고, 사용자 계정·동기화·복합 편집처럼 상태 복잡도가 실제로 커질 때 프레임워크 전환의 비용과 효과를 다시 판단하는 것입니다.
 
 ---
 
@@ -260,6 +293,42 @@ Gemini는 사용자의 프로젝트를 대신 결정하지 않습니다. 입력�
 
 ---
 
+# Security Incident Response
+
+실제 키는 `.env.local`과 Vercel Environment Variables에서만 관리하고 Git에서 제외합니다. 하지만 키가 커밋, 캡처, 로그 또는 제3자에게 노출됐거나 의심되는 경우에는 다음 순서로 대응합니다.
+
+## 즉시 조치
+
+1. Google AI Studio 또는 연결된 Google Cloud 프로젝트에서 노출된 키를 **즉시 무효화**합니다.
+2. 필요하면 직전의 안전한 배포로 롤백하거나 AI 기능을 잠시 중지해 추가 호출을 차단합니다.
+3. 새 키를 발급하고 가능한 범위에서 Gemini API 제한과 사용량 한도를 적용합니다.
+4. Vercel 환경변수와 로컬 `.env.local`을 새 키로 교체하고 Production을 재배포합니다.
+5. 노출 시각·위치·관련 커밋과 배포를 키 문자열 없이 기록합니다.
+
+배포 롤백이나 파일 삭제만으로는 이미 복사된 키를 회수할 수 없으므로 **키 폐기가 항상 첫 단계**입니다.
+
+## 조사·복구·통지
+
+- GitHub 커밋·브랜치·Issue·Actions 산출물, 공개 캡처와 포크에서 노출 범위를 조사합니다.
+- Vercel 배포·Function 로그와 Gemini 사용량에서 비정상 시각, 상태 코드, 호출량과 비용 영향을 확인합니다.
+- Git 기록에 포함됐다면 키 폐기 후 기록을 정리하고, 협업자에게 이력 재작성과 새 클론이 필요한 범위를 알립니다.
+- 새 키가 적용된 배포에서 정상 호출과 실패 처리 시나리오를 다시 검증합니다.
+- 공개 제출물에 노출됐다면 저장소 관리자와 평가 담당자에게 폐기·정리 상태를 알리고, 비정상 과금이 의심되면 Google 지원 채널에 보고합니다.
+
+## 재발 방지와 감사 로깅
+
+- 개발·Preview·Production 키 분리 및 최소 권한·API 제한 적용
+- 호출 쿼터와 예산 알림 설정, Gemini 사용량 정기 확인
+- GitHub Secret Scanning·Push Protection 및 CI 비밀 패턴 검사 활용
+- 커밋 전 `.env*`, 화면 캡처, 로그와 변경 내역 검사
+- Vercel 배포·환경변수 변경 이력과 Gemini 사용량을 감사 자료로 확인
+- 감사 로그에는 시각·경로·상태 같은 운영 메타데이터만 남기고 키와 사용자 입력 본문은 제외
+- 사고 후 원인, 탐지 경로, 대응 시간과 개선 완료 여부 기록
+
+전체 단계와 복구 완료 기준은 [보안 및 API 키 사고 대응 절차](docs/SECURITY.md)에 정리했습니다.
+
+---
+
 # Live Demo
 
 **배포 주소:** [https://codyssey-a1-3-gules.vercel.app](https://codyssey-a1-3-gules.vercel.app)
@@ -346,6 +415,7 @@ bound-mission/
 ├── docs/
 │   ├── EVIDENCE_CHECKLIST.md    # 제출 증빙 체크리스트
 │   ├── QUALITY_UPGRADE_PLAN.md  # 완성도 향상 계획
+│   ├── SECURITY.md              # API 키 유출 사고 대응 절차
 │   ├── SERVICE_PLAN.md          # 서비스 기획서
 │   └── SUBMISSION_STORY.md      # 프로젝트 서사 초안
 ├── js/
@@ -489,6 +559,12 @@ node --check js/app.js
 - [x] 데스크톱·모바일·AI 동작 화면 캡처
 - [x] AI 코딩 도구 활용 과정 캡처
 
+## 보안·설계 검토
+
+- [x] API 키 유출 시 폐기·재발급·롤백·조사·통지 절차
+- [x] 최소 권한·비밀 탐지·감사 로깅을 포함한 재발 방지 계획
+- [x] 프레임워크 도입의 장단점과 코드·라우팅·배포·테스트 변경 범위
+
 ---
 
 # Key Decisions
@@ -565,5 +641,6 @@ Metric Goal, Desired Response, Hurdle, Boundary 프레이밍은 교육기획자 
 | 자동 테스트 | `tests/test_frame.py` |
 | 환경변수 예시 | `.env.example` |
 | 서비스 기획서 | [`docs/SERVICE_PLAN.md`](docs/SERVICE_PLAN.md) |
+| 보안·키 유출 대응 절차 | [`docs/SECURITY.md`](docs/SECURITY.md) |
 | 제출 스토리 | [`docs/SUBMISSION_STORY.md`](docs/SUBMISSION_STORY.md) |
 | 공개 고지 | [`NOTICE.md`](NOTICE.md) |
